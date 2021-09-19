@@ -1,7 +1,7 @@
 export interface Post {
-  id: number;
-  content: string;
-  title: string;
+  id: number
+  content: string
+  title: string
 }
 
-export default Post;
+export default Post
