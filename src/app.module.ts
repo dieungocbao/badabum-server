@@ -6,6 +6,9 @@ import { DatabaseModule } from './database/database.module'
 import { UsersService } from './users/users.service'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
+import { CategoriesService } from './categories/categories.service';
+import { CategoriesController } from './categories/categories.controller';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -25,7 +28,9 @@ import { AuthModule } from './auth/auth.module'
     DatabaseModule,
     UsersModule,
     AuthModule,
+    CategoriesModule,
   ],
-  providers: [UsersService],
+  providers: [UsersService, CategoriesService],
+  controllers: [CategoriesController],
 })
 export class AppModule {}
