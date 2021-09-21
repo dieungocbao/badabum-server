@@ -27,29 +27,23 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('login')
-  async logIn(
-    @Req() request: RequestWithUser,
-    @Res() response: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  async logIn(@Req() request: RequestWithUser): Promise<User> {
     const { user } = request
     const cookie = this.authService.getCookieWithJwtToken(user.id)
-    response.setHeader('Set-Cookie', cookie)
-    user.password = undefined
-    return response.send(user)
+    request.res.setHeader('Set-Cookie', cookie)
+    return user
   }
 
   @UseGuards(JwtAuthenticationGuard)
   @Post('log-out')
-  async logOut(@Res() response: Response) {
-    response.setHeader('Set-Cookie', this.authService.getCookieForLogOut())
-    return response.sendStatus(200)
+  @HttpCode(200)
+  async logOut(@Req() request: RequestWithUser) {
+    request.res.setHeader('Set-Cookie', this.authService.getCookieForLogOut())
   }
 
   @UseGuards(JwtAuthenticationGuard)
   @Get()
   authenticate(@Req() request: RequestWithUser) {
-    const user = request.user
-    user.password = undefined
-    return user
+    return request.user
   }
 }
