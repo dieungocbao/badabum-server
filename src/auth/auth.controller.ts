@@ -5,7 +5,6 @@ import {
   HttpCode,
   Post,
   UseGuards,
-  Res,
   Get,
 } from '@nestjs/common'
 import { AuthService } from './auth.service'
@@ -13,8 +12,7 @@ import { RegisterDto } from './dto/register.dto'
 import { RequestWithUser } from './interfaces/requestWithUser.interface'
 import { LocalAuthenticationGuard } from './guards/localAuth.guard'
 import User from '../users/user.entity'
-import { Response } from 'express'
-import JwtAuthenticationGuard from './guards/jwtAuth.guard'
+import { JwtAuthenticationGuard } from './guards/jwtAuth.guard'
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
