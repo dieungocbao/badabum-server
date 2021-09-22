@@ -63,9 +63,6 @@ describe('The AuthenticationService', () => {
 
   describe('when creating an user', () => {
     describe('and the provided user input is valid', () => {
-      beforeEach(() => {
-        bcryptCompare.mockReturnValue(false)
-      })
       it('should return the user data', async () => {
         const user = await authService.register({
           email: mockedUser.email,
@@ -73,6 +70,21 @@ describe('The AuthenticationService', () => {
           password: mockedUser.password,
         })
         expect(user).toBe(userData)
+      })
+    })
+
+    describe('and something went wrong error', () => {
+      beforeEach(() => {
+        saveUser.mockReturnValue(Promise.reject())
+      })
+      it('should throw an error', async () => {
+        await expect(
+          authService.register({
+            email: mockedUser.email,
+            name: mockedUser.name,
+            password: mockedUser.password,
+          }),
+        ).rejects.toThrow()
       })
     })
   })

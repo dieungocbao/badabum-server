@@ -39,7 +39,6 @@ export class UsersService {
       await this.usersRepository.save(newUser)
       return newUser
     } catch (error) {
-      console.log(error)
       throw new Error('Something went wrong!!!')
     }
   }
