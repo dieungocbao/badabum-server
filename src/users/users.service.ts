@@ -3,12 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import User from './user.entity'
 import CreateUserDto from './dto/createUse.dto'
+import { FilesService } from '../files/files.service'
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private readonly filesService: FilesService,
   ) {}
 
   async getByEmail(email: string) {
@@ -41,5 +43,15 @@ export class UsersService {
     } catch (error) {
       throw new Error('Something went wrong!!!')
     }
+  }
+
+  async addAvatar(userId: number, fileName: string, filePath: string) {
+    const avatar = await this.filesService.uploadPublicFile(fileName, filePath)
+    const user = await this.getById(userId)
+    await this.usersRepository.update(userId, {
+      ...user,
+      avatar,
+    })
+    return avatar
   }
 }

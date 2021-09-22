@@ -6,9 +6,10 @@ import { DatabaseModule } from './database/database.module'
 import { UsersService } from './users/users.service'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
-import { CategoriesService } from './categories/categories.service';
-import { CategoriesController } from './categories/categories.controller';
-import { CategoriesModule } from './categories/categories.module';
+import { CategoriesService } from './categories/categories.service'
+import { CategoriesController } from './categories/categories.controller'
+import { CategoriesModule } from './categories/categories.module'
+import { FilesModule } from './files/files.module'
 
 @Module({
   imports: [
@@ -23,14 +24,16 @@ import { CategoriesModule } from './categories/categories.module';
         PORT: Joi.number(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
+        MULTER_DEST: Joi.string().required(),
       }),
     }),
     DatabaseModule,
     UsersModule,
     AuthModule,
     CategoriesModule,
+    FilesModule,
   ],
-  providers: [UsersService, CategoriesService],
-  controllers: [CategoriesController],
+  providers: [],
+  controllers: [],
 })
 export class AppModule {}
