@@ -22,7 +22,6 @@ import { join } from 'path'
         PORT: Joi.number(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
-        MULTER_DEST: Joi.string().required(),
       }),
     }),
     ServeStaticModule.forRoot({
