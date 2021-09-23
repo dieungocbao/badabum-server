@@ -37,3 +37,6 @@ lerna-debug.log*
 # ENV files
 docker.env
 .env
+
+# Folders
+uploads

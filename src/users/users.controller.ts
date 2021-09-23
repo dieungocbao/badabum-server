@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Post,
   Req,
   UploadedFile,
@@ -39,5 +40,11 @@ export class UsersController {
       file.filename,
       file.path,
     )
+  }
+
+  @Delete('avatar')
+  @UseGuards(JwtAuthenticationGuard)
+  async deleteAvatar(@Req() request: RequestWithUser) {
+    return this.usersService.deleteAvatar(request.user.id)
   }
 }

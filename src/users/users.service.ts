@@ -41,7 +41,10 @@ export class UsersService {
       await this.usersRepository.save(newUser)
       return newUser
     } catch (error) {
-      throw new Error('Something went wrong!!!')
+      throw new HttpException(
+        'Something went wrong!!!',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
     }
   }
 
@@ -53,5 +56,17 @@ export class UsersService {
       avatar,
     })
     return avatar
+  }
+
+  async deleteAvatar(userId: number) {
+    const user = await this.getById(userId)
+    const avatar = user.avatar
+    if (avatar) {
+      await this.usersRepository.update(userId, {
+        ...user,
+        avatar: null,
+      })
+      await this.filesService.deletePublicFile(avatar)
+    }
   }
 }
