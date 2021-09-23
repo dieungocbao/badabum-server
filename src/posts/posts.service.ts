@@ -42,6 +42,7 @@ export default class PostsService {
       relations: ['author'],
     })
     if (updatedPost) {
+      await this.postsSearchService.update(updatedPost)
       return updatedPost
     }
     throw new PostNotFoundException(id)
@@ -52,6 +53,7 @@ export default class PostsService {
     if (!deleteResponse.affected) {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
     }
+    await this.postsSearchService.remove(id)
   }
 
   async searchForPosts(text: string) {
