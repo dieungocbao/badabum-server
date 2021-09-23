@@ -3,16 +3,15 @@ import { PostsModule } from './posts/posts.module'
 import { ConfigModule } from '@nestjs/config'
 import * as Joi from '@hapi/joi'
 import { DatabaseModule } from './database/database.module'
-import { UsersService } from './users/users.service'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
-import { CategoriesService } from './categories/categories.service';
-import { CategoriesController } from './categories/categories.controller';
-import { CategoriesModule } from './categories/categories.module';
+import { CategoriesModule } from './categories/categories.module'
+import { FilesModule } from './files/files.module'
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { join } from 'path'
 
 @Module({
   imports: [
-    PostsModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -23,14 +22,21 @@ import { CategoriesModule } from './categories/categories.module';
         PORT: Joi.number(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
+        MULTER_DEST: Joi.string().required(),
       }),
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/assets/',
     }),
     DatabaseModule,
     UsersModule,
     AuthModule,
+    PostsModule,
     CategoriesModule,
+    FilesModule,
   ],
-  providers: [UsersService, CategoriesService],
-  controllers: [CategoriesController],
+  providers: [],
+  controllers: [],
 })
 export class AppModule {}
