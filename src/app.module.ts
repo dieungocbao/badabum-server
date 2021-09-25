@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module'
 import { FilesModule } from './files/files.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -22,7 +23,6 @@ import { join } from 'path'
         PORT: Joi.number(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
-        MULTER_DEST: Joi.string().required(),
       }),
     }),
     ServeStaticModule.forRoot({
@@ -35,6 +35,7 @@ import { join } from 'path'
     PostsModule,
     CategoriesModule,
     FilesModule,
+    SearchModule,
   ],
   providers: [],
   controllers: [],

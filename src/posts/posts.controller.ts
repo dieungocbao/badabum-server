@@ -8,6 +8,7 @@ import {
   Patch,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common'
 import PostsService from './posts.service'
 import CreatePostDto from './dto/createPost.dto'
@@ -47,5 +48,13 @@ export default class PostsController {
   @Delete(':id')
   async deletePost(@Param() { id }: FindOneParams) {
     return this.postsService.deletePost(Number(id))
+  }
+
+  @Get()
+  async getPosts(@Query('search') search: string) {
+    if (search) {
+      return this.postsService.searchForPosts(search)
+    }
+    return this.postsService.getAllPosts()
   }
 }
