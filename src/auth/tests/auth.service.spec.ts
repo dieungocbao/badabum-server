@@ -135,7 +135,9 @@ describe('The AuthenticationService', () => {
   describe('when creating a cookie', () => {
     it('should return a string', () => {
       const userId = 1
-      expect(typeof authService.getCookieWithJwtToken(userId)).toEqual('string')
+      expect(typeof authService.getCookieWithJwtAccessToken(userId)).toEqual(
+        'string',
+      )
     })
   })
 

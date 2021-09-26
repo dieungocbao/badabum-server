@@ -4,6 +4,7 @@ import { Repository } from 'typeorm'
 import User from './user.entity'
 import CreateUserDto from './dto/createUse.dto'
 import { FilesService } from '../files/files.service'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class UsersService {
@@ -33,6 +34,19 @@ export class UsersService {
       )
     }
     return user
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number) {
+    const user = await this.getById(userId)
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    )
+
+    if (isRefreshTokenMatching) {
+      return user
+    }
   }
 
   async create(userData: CreateUserDto) {
@@ -68,5 +82,18 @@ export class UsersService {
       })
       await this.filesService.deletePublicFile(avatar)
     }
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: number) {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10)
+    await this.usersRepository.update(userId, {
+      currentHashedRefreshToken,
+    })
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.usersRepository.update(userId, {
+      currentHashedRefreshToken: null,
+    })
   }
 }
