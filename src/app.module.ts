@@ -9,7 +9,7 @@ import { CategoriesModule } from './categories/categories.module'
 import { FilesModule } from './files/files.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
-import { SearchModule } from './search/search.module';
+import { SearchModule } from './search/search.module'
 
 @Module({
   imports: [
@@ -21,8 +21,10 @@ import { SearchModule } from './search/search.module';
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
-        JWT_SECRET: Joi.string().required(),
-        JWT_EXPIRATION_TIME: Joi.string().required(),
+        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+        JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
     ServeStaticModule.forRoot({

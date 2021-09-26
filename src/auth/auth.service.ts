@@ -49,6 +49,7 @@ export class AuthService {
       user.password = undefined
       return user
     } catch (error) {
+      console.log(error)
       throw new HttpException(
         'Wrong credentials provided',
         HttpStatus.BAD_REQUEST,
@@ -72,15 +73,40 @@ export class AuthService {
     }
   }
 
-  public getCookieWithJwtToken(userId: number) {
+  public getCookieWithJwtAccessToken(userId: number) {
     const payload: TokenPayload = { userId }
-    const token = this.jwtService.sign(payload)
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    })
     return `access-token=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
-      'JWT_EXPIRATION_TIME',
+      'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
     )}`
   }
 
+  public getCookieWithJwtRefreshToken(userId: number) {
+    const payload: TokenPayload = { userId }
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    })
+    const cookie = `refresh-token=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+    )}`
+    return {
+      cookie,
+      token,
+    }
+  }
+
   public getCookieForLogOut() {
-    return `access-token=; HttpOnly; Path=/; Max-Age=0`
+    return [
+      `access-token=; HttpOnly; Path=/; Max-Age=0`,
+      `refesh-token=; HttpOnly; Path=/; Max-Age=0`,
+    ]
   }
 }
