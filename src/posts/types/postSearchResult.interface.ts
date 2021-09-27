@@ -1,8 +1,10 @@
 import { PostSearchBody } from './postSearchBody.interface'
 
-export interface PostSearchResponse {
+export interface PostSearchResult {
   hits: {
-    total: number
+    total: {
+      value: number
+    }
     hits: Array<{
       _source: PostSearchBody
     }>

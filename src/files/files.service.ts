@@ -1,6 +1,6 @@
 import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { QueryRunner, Repository } from 'typeorm'
 import { PublicFile } from './publicFile.entity'
 import * as fs from 'fs'
 import * as path from 'path'
@@ -21,8 +21,12 @@ export class FilesService {
     return newFile
   }
 
-  async deletePublicFile(file: PublicFile) {
+  async deletePublicFile(fileId: number) {
     try {
+      const file = await this.publicFilesRepository.findOne({ id: fileId })
+      if (!file) {
+        throw new HttpException('File not found', HttpStatus.NOT_FOUND)
+      }
       fs.unlinkSync(path.join(__dirname, '/../../', file.url))
       await this.publicFilesRepository.delete(file.id)
     } catch (error) {
@@ -32,5 +36,17 @@ export class FilesService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       )
     }
+  }
+
+  async deletePublicFileWithQueryRunner(
+    fileId: number,
+    queryRunner: QueryRunner,
+  ) {
+    const file = await queryRunner.manager.findOne(PublicFile, { id: fileId })
+    if (!file) {
+      throw new HttpException('File not found', HttpStatus.NOT_FOUND)
+    }
+    fs.unlinkSync(path.join(__dirname, '/../../', file.url))
+    await queryRunner.manager.delete(PublicFile, fileId)
   }
 }
