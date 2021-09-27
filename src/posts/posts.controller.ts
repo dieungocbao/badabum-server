@@ -16,6 +16,7 @@ import UpdatePostDto from './dto/updatePost.dto'
 import { JwtAuthenticationGuard } from '../auth/guards/jwtAuth.guard'
 import { FindOneParams } from '../utils/findOneParams'
 import { RequestWithUser } from '../auth/interfaces/requestWithUser.interface'
+import { PaginationParams } from '../utils/types/paginationParams'
 
 @Controller('posts')
 export default class PostsController {
@@ -51,10 +52,13 @@ export default class PostsController {
   }
 
   @Get()
-  async getPosts(@Query('search') search: string) {
+  async getPosts(
+    @Query('search') search: string,
+    @Query() { offset, limit, startId }: PaginationParams,
+  ) {
     if (search) {
-      return this.postsService.searchForPosts(search)
+      return this.postsService.searchForPosts(search, offset, limit, startId)
     }
-    return this.postsService.getAllPosts()
+    return this.postsService.getAllPosts(offset, limit, startId)
   }
 }
