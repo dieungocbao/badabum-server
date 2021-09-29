@@ -10,6 +10,7 @@ import { FilesModule } from './files/files.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { SearchModule } from './search/search.module'
+import { SubscribersModule } from './subscribers/subscribers.module';
 
 @Module({
   imports: [
@@ -25,6 +26,11 @@ import { SearchModule } from './search/search.module'
         JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        ELASTICSEARCH_NODE: Joi.string(),
+        ELASTICSEARCH_USERNAME: Joi.string(),
+        ELASTICSEARCH_PASSWORD: Joi.string(),
+        SUBSCRIBERS_SERVICE_HOST: Joi.string(),
+        SUBSCRIBERS_SERVICE_PORT: Joi.string(),
       }),
     }),
     ServeStaticModule.forRoot({
@@ -38,6 +44,7 @@ import { SearchModule } from './search/search.module'
     CategoriesModule,
     FilesModule,
     SearchModule,
+    SubscribersModule,
   ],
   providers: [],
   controllers: [],
