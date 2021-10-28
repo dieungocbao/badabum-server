@@ -10,7 +10,7 @@ import { FilesModule } from './files/files.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { SearchModule } from './search/search.module'
-import { SubscribersModule } from './subscribers/subscribers.module';
+import { SubscribersModule } from './subscribers/subscribers.module'
 
 @Module({
   imports: [
@@ -29,8 +29,10 @@ import { SubscribersModule } from './subscribers/subscribers.module';
         ELASTICSEARCH_NODE: Joi.string(),
         ELASTICSEARCH_USERNAME: Joi.string(),
         ELASTICSEARCH_PASSWORD: Joi.string(),
-        SUBSCRIBERS_SERVICE_HOST: Joi.string(),
-        SUBSCRIBERS_SERVICE_PORT: Joi.string(),
+        RABBITMQ_USER: Joi.string(),
+        RABBITMQ_PASSWORD: Joi.string(),
+        RABBITMQ_HOST: Joi.string(),
+        RABBITMQ_QUEUE_NAME: Joi.string(),
       }),
     }),
     ServeStaticModule.forRoot({

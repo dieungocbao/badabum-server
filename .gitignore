@@ -37,6 +37,7 @@ lerna-debug.log*
 # ENV files
 docker.env
 .env
+rabbitmq.env
 
 # Folders
 uploads
