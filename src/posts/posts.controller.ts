@@ -9,6 +9,9 @@ import {
   UseGuards,
   Req,
   Query,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  CacheInterceptor,
 } from '@nestjs/common'
 import PostsService from './posts.service'
 import { CreatePostDto } from './dto/createPost.dto'
@@ -19,6 +22,7 @@ import { RequestWithUser } from '../auth/interfaces/requestWithUser.interface'
 import { PaginationParams } from '../utils/types/paginationParams'
 
 @Controller('posts')
+@UseInterceptors(ClassSerializerInterceptor)
 export default class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
@@ -51,6 +55,7 @@ export default class PostsController {
     return this.postsService.deletePost(Number(id))
   }
 
+  @UseInterceptors(CacheInterceptor)
   @Get()
   async getPosts(
     @Query('search') search: string,
