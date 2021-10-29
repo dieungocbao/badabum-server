@@ -10,6 +10,8 @@ import { FilesModule } from './files/files.module'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { SearchModule } from './search/search.module'
+import { ProductsModule } from './products/products.module'
+import { ProductCategoriesModule } from './productCategories/productCategories.module'
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { SearchModule } from './search/search.module'
     CategoriesModule,
     FilesModule,
     SearchModule,
+    ProductsModule,
+    ProductCategoriesModule,
   ],
   providers: [],
   controllers: [],
