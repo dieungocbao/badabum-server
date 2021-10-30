@@ -12,6 +12,8 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   CacheInterceptor,
+  CacheKey,
+  CacheTTL,
 } from '@nestjs/common'
 import PostsService from './posts.service'
 import { CreatePostDto } from './dto/createPost.dto'
@@ -20,6 +22,7 @@ import { JwtAuthenticationGuard } from '../auth/guards/jwtAuth.guard'
 import { FindOneParams } from '../utils/findOneParams'
 import { RequestWithUser } from '../auth/interfaces/requestWithUser.interface'
 import { PaginationParams } from '../utils/types/paginationParams'
+import { GET_POSTS_CACHE_KEY } from './postsCacheKey.constant'
 
 @Controller('posts')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -55,6 +58,8 @@ export default class PostsController {
     return this.postsService.deletePost(Number(id))
   }
 
+  @CacheKey(GET_POSTS_CACHE_KEY)
+  @CacheTTL(120)
   @UseInterceptors(CacheInterceptor)
   @Get()
   async getPosts(

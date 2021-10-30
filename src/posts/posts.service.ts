@@ -1,11 +1,19 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import {
+  CACHE_MANAGER,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { CreatePostDto } from './dto/createPost.dto'
-import UpdatePostDto from './dto/updatePost.dto'
-import { Post } from './post.entity'
+import { Cache } from 'cache-manager'
 import { FindManyOptions, In, MoreThan, Repository } from 'typeorm'
 import User from '../users/user.entity'
+import { CreatePostDto } from './dto/createPost.dto'
+import UpdatePostDto from './dto/updatePost.dto'
 import { PostNotFoundException } from './exception/postNotFound.exception'
+import { Post } from './post.entity'
+import { GET_POSTS_CACHE_KEY } from './postsCacheKey.constant'
 import PostsSearchService from './postsSearch.service'
 
 @Injectable()
@@ -14,7 +22,17 @@ export default class PostsService {
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
     private postsSearchService: PostsSearchService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  async clearCache() {
+    const keys: string[] = await this.cacheManager.store.keys()
+    keys.forEach((key) => {
+      if (key.startsWith(GET_POSTS_CACHE_KEY)) {
+        this.cacheManager.del(key)
+      }
+    })
+  }
 
   async getAllPosts(offset?: number, limit?: number, startId?: number) {
     const where: FindManyOptions<Post>['where'] = {}
@@ -53,6 +71,8 @@ export default class PostsService {
   async createPost(post: CreatePostDto, user: User) {
     const newPost = await this.postsRepository.create({ ...post, author: user })
     await this.postsRepository.save(newPost)
+    this.postsSearchService.indexPost(newPost)
+    await this.clearCache()
     return newPost
   }
 
@@ -63,6 +83,7 @@ export default class PostsService {
     })
     if (updatedPost) {
       await this.postsSearchService.update(updatedPost)
+      await this.clearCache()
       return updatedPost
     }
     throw new PostNotFoundException(id)
@@ -74,6 +95,7 @@ export default class PostsService {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
     }
     await this.postsSearchService.remove(id)
+    await this.clearCache()
   }
 
   async searchForPosts(
