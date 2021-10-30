@@ -23,11 +23,31 @@ import { FindOneParams } from '../utils/findOneParams'
 import { RequestWithUser } from '../auth/interfaces/requestWithUser.interface'
 import { PaginationParams } from '../utils/types/paginationParams'
 import { GET_POSTS_CACHE_KEY } from './postsCacheKey.constant'
+import { HttpCacheInterceptor } from './httpCache.interceptor'
 
 @Controller('posts')
 @UseInterceptors(ClassSerializerInterceptor)
 export default class PostsController {
   constructor(private readonly postsService: PostsService) {}
+
+  @CacheKey(GET_POSTS_CACHE_KEY)
+  @CacheTTL(120)
+  @UseInterceptors(HttpCacheInterceptor)
+  @Get()
+  async getPosts(
+    @Query('search') search: string,
+    @Query() { offset, limit, startId }: PaginationParams,
+  ) {
+    if (search) {
+      return await this.postsService.searchForPosts(
+        search,
+        offset,
+        limit,
+        startId,
+      )
+    }
+    return await this.postsService.getAllPosts(offset, limit, startId)
+  }
 
   @Get()
   getAllPosts() {
@@ -56,19 +76,5 @@ export default class PostsController {
   @Delete(':id')
   async deletePost(@Param() { id }: FindOneParams) {
     return this.postsService.deletePost(Number(id))
-  }
-
-  @CacheKey(GET_POSTS_CACHE_KEY)
-  @CacheTTL(120)
-  @UseInterceptors(CacheInterceptor)
-  @Get()
-  async getPosts(
-    @Query('search') search: string,
-    @Query() { offset, limit, startId }: PaginationParams,
-  ) {
-    if (search) {
-      return this.postsService.searchForPosts(search, offset, limit, startId)
-    }
-    return this.postsService.getAllPosts(offset, limit, startId)
   }
 }
